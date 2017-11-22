@@ -1,0 +1,12 @@
+@using CCMAdmin.Areas.RegionManager.Models.RegionList
+@model RegionListModel
+
+<h2>Index</h2>
+
+<div>
+    @foreach(var region in Model)
+    {
+        <div>@region.Name</div>
+    }
+</div>
+
