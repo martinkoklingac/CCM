@@ -2,4 +2,4 @@
 .suo
 obj/
 bin/
-wwwroot/lib
+**/wwwroot/lib/
