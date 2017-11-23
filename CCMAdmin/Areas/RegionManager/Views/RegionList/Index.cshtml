@@ -1,12 +1,19 @@
 @using CCMAdmin.Areas.RegionManager.Models.RegionList
 @model RegionListModel
 
+@section scripts
+{
+    <script src="~/js/region-manager/region-list.js"></script>
+}
+
+
+
 <h2>Index</h2>
 
-<div>
+<div id="_regionList">
     @foreach(var region in Model)
     {
-        <div>@region.Name</div>
+        <ccm-region id="@region.Id" name="@region.Name"></ccm-region>
     }
 </div>
 
