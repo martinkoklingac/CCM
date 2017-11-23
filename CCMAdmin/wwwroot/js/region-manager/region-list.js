@@ -13,7 +13,6 @@ Vue.component("ccm-region-editor", {
 
     methods: {
         onCancel: function () {
-            console.log("-> cancel ..");
             this.$emit("cancel");
         }
     }
@@ -37,11 +36,9 @@ Vue.component("ccm-region", {
     </div>`,
     methods: {
         onEdit: function () {
-            console.log("-> edit ...");
             this.mode = "Edit";
         },
         onCancelled: function () {
-            console.log("-> cancelled ...");
             this.mode = "None";
         }
     },
