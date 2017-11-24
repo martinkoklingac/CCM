@@ -1,0 +1,14 @@
+﻿[
+  {
+    "outputFile": "wwwroot/js/region-manager/region-list.css",
+    "inputFile": "wwwroot/js/region-manager/region-list.less"
+  },
+  {
+    "outputFile": "wwwroot/css/buttons.css",
+    "inputFile": "wwwroot/css/buttons.less"
+  },
+  {
+    "outputFile": "wwwroot/css/inputs.css",
+    "inputFile": "wwwroot/css/inputs.less"
+  }
+]
