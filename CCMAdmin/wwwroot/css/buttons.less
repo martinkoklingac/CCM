@@ -1,0 +1,40 @@
+﻿@import "colors.less";
+
+.ccm-btn {
+    display: inline-block;
+    border: solid 1px;
+    box-sizing: border-box;
+    font-weight: 600;
+
+    &[disabled] {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+    &.normal {
+        border-radius: 4px;
+        height: 22px;
+        line-height: 22px;
+        font-size: 12px;
+        min-width: 50px;
+        padding: 0 5px;
+    }
+
+    &.submit-btn {
+        border-color: @std-gray-2;
+        background-color: @std-blue-1;
+        color: @std-white;
+    }
+
+    &.cancel-btn {
+        border-color: @std-gray-2;
+        background-color: @std-white;
+        color: @std-red-1;
+    }
+
+    &.delete-btn {
+        border-color: @std-gray-2;
+        background-color: @std-red;
+        color: @std-gray;
+    }
+}

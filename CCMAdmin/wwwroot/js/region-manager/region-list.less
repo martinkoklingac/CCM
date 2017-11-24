@@ -1,0 +1,83 @@
+﻿@import "../../css/colors.less";
+
+.region-list {
+    .ccm-region-editor {
+    }
+
+    .ccm-region {
+        background-color: @std-gray-1;
+        border-top: 1px solid @std-gray;
+
+        .region-wrapper {
+            padding: 5px 0;
+        }
+
+        .region-constructor-wrapper {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            border-top: 1px solid @std-gray;
+            background-color: @std-white-1;
+        }
+
+        &:first-child:not(.child) {
+            border-top: none;
+        }
+
+        &.expanded {
+            background-color: @std-blue-3;
+            border-left: 5px solid @std-blue-2;
+        }
+
+        &.root {
+            & > .region-constructor-wrapper, & > .child-region-wrapper {
+                margin-left: 20px;
+            }
+
+            &:not(.expanded) {
+                padding-left: 5px;  //This is probably going to be a global style
+            }
+        }
+
+        &.child {
+            padding-left: 20px;
+            position: relative;
+
+            &:before {
+                content: '\2192';
+                display: block;
+                position: absolute;
+                top: 5px;
+                left: 0;
+                width: 20px;
+                line-height: 24px;
+                font-size: 17px;
+                height: 24px;
+                text-align: right;
+            }
+
+            &.expanded {
+                &:before {
+                    color: @std-blue-1;
+                    text-align: left;
+                }
+            }
+        }
+
+        .info-section, .action-section {
+            display: inline-block;
+            text-align: left;
+            line-height: 24px;
+        }
+
+        .info-section {
+            padding: 0 10px;
+            width: 200px;
+            border-right: 1px solid @std-gray;
+        }
+
+        .action-section {
+            padding: 0 10px;
+        }
+    }
+}
