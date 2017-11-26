@@ -28,7 +28,6 @@
   <ItemGroup>
     <Folder Include="Areas\RegionManager\Controllers\" />
     <Folder Include="Areas\RegionManager\Views\RegionList\" />
-    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>
