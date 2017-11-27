@@ -1,7 +1,35 @@
-﻿.ccm-text-field {
+﻿@import "colors.less";
 
-}
+.ccm-input {
+    border: solid;
+    border-width: 1px;
+    box-sizing: border-box;
+    font-weight: 600;
+    //----
+    border-color: @std-gray-2;
+    background-color: @std-white;
+    color: @std-gray-2;
 
-.ccm-text-area {
+    &[disabled] {
+        opacity: 0.5;
+        cursor: default;
+    }
 
+    &.normal {
+        border-radius: 4px;
+        height: 22px;
+        line-height: 22px;
+        font-size: 12px;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    &.error {
+        border-color: @std-red-1;
+        border-width: 2px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
 }
