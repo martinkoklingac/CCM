@@ -39,7 +39,13 @@ Vue.component("ccm-region-constructor", {
         <div 
             v-if="isFormVisible"
             class="form-container">
-            <h1>FORM !</h1>
+            <div>
+                <label>Region Name</label>
+                <input type="text" class="ccm-input normal" 
+                    v-model.trim="model.name" 
+                    v-bind:class="{'error':isModelFieldValid('name')}" />
+                <span v-if="isModelFieldValid('name')">{{getModelFieldError('name')}}</span>
+            </div>
         </div>
     </div>`,
 
@@ -51,13 +57,46 @@ Vue.component("ccm-region-constructor", {
             this.isFormVisible = false;
         },
         onAdd: function () {
-            this.isFormVisible = false;
+            //this.isFormVisible = false;
+
+            $.ajax({
+                method: "PUT",
+                url: "/region-manager/region-list/add",
+                contentType: "application/json; charset=UTF-8",
+                data: JSON.stringify(this.model),
+                success: $.proxy(function (d) {
+                    if (!d.success) {
+                        this.modelErrors = d;
+                    } else {
+                        console.log("-> OK!");
+                        this.isFormVisible = false;
+                    }
+                }, this)
+            });
+
+            console.log(JSON.stringify(this.model));
+        },
+        isModelFieldValid: function (fieldKey) {
+            return this.getModelFieldError(fieldKey) != null;
+        },
+        getModelFieldError: function (fieldKey) {
+            if (this.modelErrors
+                && typeof (this.modelErrors) === 'object'
+                && typeof (this.modelErrors[fieldKey]) === 'string') {
+                return this.modelErrors[fieldKey];
+            } else {
+                return null;
+            }
         }
     },
 
     data: function () {
         return {
-            isFormVisible: false
+            isFormVisible: false,
+            model: {
+                name: null
+            },
+            modelErrors: null
         };
     }
 });
