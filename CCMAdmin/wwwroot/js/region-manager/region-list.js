@@ -1,4 +1,14 @@
 ﻿
+Vue.component("ccm-loader", {
+    template:
+    `<div class="loader">
+        <span class="loader-item"></span>
+        <span class="loader-item"></span>
+        <span class="loader-item"></span>
+        <span class="loader-item"></span>
+    </div>`
+});
+
 
 Vue.component("ccm-region-editor", {
     props: ['id'],
@@ -22,7 +32,8 @@ Vue.component("ccm-region-constructor", {
     props: ['parent-id'],
     template:
     `<div class="ccm-region-constructor">
-        <div class="action-container">
+        <div class="action-container"
+            v-if="!isLoading">
             <button
                 v-if="!isFormVisible"
                 v-on:click="onAddNew"
@@ -36,17 +47,20 @@ Vue.component("ccm-region-constructor", {
                 v-on:click="onAdd"
                 class="ccm-btn normal submit-btn">Add</button>
         </div>
-        <div 
-            v-if="isFormVisible"
-            class="form-container">
-            <div>
+
+        <div class="form-container"
+            v-if="isFormVisible && !isLoading">
+            <div class="ccm-input-container">
                 <label>Region Name</label>
                 <input type="text" class="ccm-input normal" 
                     v-model.trim="model.name" 
                     v-bind:class="{'error':isModelFieldValid('name')}" />
-                <span v-if="isModelFieldValid('name')">{{getModelFieldError('name')}}</span>
+                <span class="error"
+                    v-if="isModelFieldValid('name')">{{getModelFieldError('name')}}</span>
             </div>
         </div>
+
+        <ccm-loader v-if="isLoading" />
     </div>`,
 
     methods: {
@@ -57,7 +71,7 @@ Vue.component("ccm-region-constructor", {
             this.isFormVisible = false;
         },
         onAdd: function () {
-            //this.isFormVisible = false;
+            this.isLoading = true;
 
             $.ajax({
                 method: "PUT",
@@ -65,11 +79,18 @@ Vue.component("ccm-region-constructor", {
                 contentType: "application/json; charset=UTF-8",
                 data: JSON.stringify(this.model),
                 success: $.proxy(function (d) {
+                    this.isLoading = false;
+            
                     if (!d.success) {
                         this.modelErrors = d;
                     } else {
                         console.log("-> OK!");
+                        console.log(d);
                         this.isFormVisible = false;
+
+                        this.$emit("created", { id: 123, name: this.model.name });
+                        this.model = this.init();
+                        this.modelErrors = null;
                     }
                 }, this)
             });
@@ -87,15 +108,21 @@ Vue.component("ccm-region-constructor", {
             } else {
                 return null;
             }
+        },
+
+        init: function () {
+            return {
+                parentId: this.parentId,
+                name: null
+            };
         }
     },
 
     data: function () {
         return {
             isFormVisible: false,
-            model: {
-                name: null
-            },
+            isLoading: false,
+            model: this.init(),
             modelErrors: null
         };
     }
@@ -139,7 +166,8 @@ Vue.component("ccm-region", {
             class="region-constructor-wrapper">
             <ccm-region-constructor
                 v-if="isExpanded"
-                v-bind:parent-id = 'id' />
+                v-bind:parent-id = 'id'
+                v-on:created="onRegionCreated"/>
         </div>
 
         <div v-if="isExpanded" 
@@ -174,6 +202,11 @@ Vue.component("ccm-region", {
         },
         onCollapse: function () {
             this.isExpanded = false;
+        },
+        onRegionCreated: function (d) {
+            console.log("-> created");
+            console.log(d);
+            this.childRegions.push(d);
         }
     },
 
