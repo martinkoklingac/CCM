@@ -10,5 +10,17 @@
   {
     "outputFile": "wwwroot/css/inputs.css",
     "inputFile": "wwwroot/css/inputs.less"
+  },
+  {
+    "outputFile": "wwwroot/css/typography.css",
+    "inputFile": "wwwroot/css/typography.less"
+  },
+  {
+    "outputFile": "wwwroot/css/loader.css",
+    "inputFile": "wwwroot/css/loader.less"
+  },
+  {
+    "outputFile": "wwwroot/js/region-manager/ccm-region-constructor.css",
+    "inputFile": "wwwroot/js/region-manager/ccm-region-constructor.less"
   }
 ]
