@@ -1,0 +1,62 @@
+﻿@import "colors.less";
+
+.loader {
+    font-size: 0;
+
+    .loader-item {
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        vertical-align: middle;
+        background-color: @std-red;
+        margin-left: 8px;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        -webkit-animation: loader 1.8s infinite ease-in-out;
+        animation: loader 1.8s infinite ease-in-out;
+
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &:nth-child(1) {
+            -webkit-animation-delay: -0.48s;
+            animation-delay: -0.48s;
+        }
+
+        &:nth-child(2) {
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        &:nth-child(3) {
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+        &:nth-child(4) {
+            -webkit-animation-delay: 0s;
+            animation-delay: 0s;
+        }
+    }
+}
+
+@-webkit-keyframes loader {
+    0%, 80%, 100% {
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}
+
+@keyframes loader {
+    0%, 80%, 100% {
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}

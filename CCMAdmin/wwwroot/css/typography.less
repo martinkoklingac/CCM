@@ -1,0 +1,15 @@
+﻿@import "colors.less";
+
+label {
+    margin: 0;
+}
+
+.error {
+    &:not(input) {
+        color: @std-red-error;
+    }
+
+    input& {
+        border-color: @std-red-error;
+    }
+}
