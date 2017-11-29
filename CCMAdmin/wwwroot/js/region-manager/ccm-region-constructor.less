@@ -1,9 +1,41 @@
 ﻿.ccm-region-constructor {
-    .action-container {
-    }
+    //.action-container {
+    //}
+    //
+    //.form-container {
+    //    margin-top: 10px;
+    //    margin-bottom: 10px;
+    //}
+}
 
-    .form-container {
-        margin-top: 10px;
-        margin-bottom: 10px;
+
+
+.action-container {
+}
+
+.form-container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.warning {
+    @square-size: 50px;
+    position: relative;
+    padding-left: @square-size;
+    min-height: @square-size;
+
+    &:before {
+        content: '\26A0';
+        display: block;
+        width: @square-size;
+        height: @square-size;
+        line-height: @square-size;
+        font-size: @square-size;
+        font-weight: bold;
+        vertical-align: middle;
+        color: red;
+        position: absolute;
+        top: 0;
+        left: 0;
     }
 }
