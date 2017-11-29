@@ -84,11 +84,9 @@ Vue.component("ccm-region-constructor", {
                     if (!d.success) {
                         this.modelErrors = d;
                     } else {
-                        console.log("-> OK!");
-                        console.log(d);
                         this.isFormVisible = false;
 
-                        this.$emit("created", { id: 123, name: this.model.name });
+                        this.$emit("created", d.data);
                         this.model = this.init();
                         this.modelErrors = null;
                     }
@@ -131,7 +129,7 @@ Vue.component("ccm-region-constructor", {
 Vue.component("ccm-region", {
     props: ['id', 'parent-id', 'name'],
     template:
-    `<div class="ccm-region" v-bind:class="{ 'child': isChild, 'root': !isChild, 'expanded': isExpanded}">
+    `<div class="ccm-region" v-bind:class="{ 'child': isChild, 'root': !isChild, 'expanded': (isLoading || isExpanded)}">
         <div class="region-wrapper">
             <div class="info-section">
                 <span>{{name}}</span>
@@ -182,6 +180,11 @@ Vue.component("ccm-region", {
                 There are no regions
             </div>
         </div>
+
+        <div class="loader-wrapper"
+            v-if="isLoading">
+            <ccm-loader />
+        </div>
     </div>`,
     methods: {
         onEdit: function () {
@@ -191,21 +194,18 @@ Vue.component("ccm-region", {
             this.mode = "None";
         },
         onExpand: function () {
-            if (!this.childRegions) {
-                this.childRegions = [
-                    { id: 77, name: "dummy name 77" },
-                    { id: 88, name: "dummy name 88" }
-                ]
-            }
+            this.isLoading = true;
 
-            this.isExpanded = true;
+            $.get(window.location + "/get-children", { parentId: this.id }, $.proxy(function (d) {
+                this.childRegions = d;
+                this.isExpanded = true;
+                this.isLoading = false;
+            }, this));
         },
         onCollapse: function () {
             this.isExpanded = false;
         },
         onRegionCreated: function (d) {
-            console.log("-> created");
-            console.log(d);
             this.childRegions.push(d);
         }
     },
@@ -218,6 +218,7 @@ Vue.component("ccm-region", {
         return {
             mode: 'None',
             isExpanded: false,
+            isLoading: false,
             isChild: false,
             childRegions: null
         };
