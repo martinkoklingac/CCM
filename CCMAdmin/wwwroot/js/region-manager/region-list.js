@@ -9,6 +9,42 @@ Vue.component("ccm-loader", {
     </div>`
 });
 
+Vue.component("ccm-region-deleter", {
+    props: ['id', 'name', 'is-root'],
+    template:
+    `<div class="ccm-region-deleter">
+        <div class="action-container">
+            <button
+                v-on:click="onCancel"
+                class="ccm-btn normal cancel-btn">Cancel</button>
+        </div>
+        <div class="form-container">
+            <div class="warning">
+                <div class="ccm-input-container">
+                    <input type="radio" v-bind:name="'delete-children-'+id" value="false" v-model="deleteChildren" />
+                    <span v-if="!isRoot">Delete <b>{{name}}</b> &amp; merge child regions into parent</span>
+                    <span v-if="isRoot">Delete <b>{{name}}</b> - child regions will become new root regions</span>
+                </div>
+                <div class="ccm-input-container">
+                    <input type="radio" v-bind:name="'delete-children-'+id" value="true" v-model="deleteChildren" />
+                    <span>Delete <b>{{name}}</b> as well as entire region subtree</span>
+                </div>
+            </div>
+        </div>
+    </div>`,
+
+    methods: {
+        onCancel: function () {
+            this.$emit("cancel");
+        }
+    },
+
+    data: function () {
+        return {
+            deleteChildren: false
+        }
+    }
+});
 
 Vue.component("ccm-region-editor", {
     props: ['id'],
@@ -80,7 +116,7 @@ Vue.component("ccm-region-constructor", {
                 data: JSON.stringify(this.model),
                 success: $.proxy(function (d) {
                     this.isLoading = false;
-            
+
                     if (!d.success) {
                         this.modelErrors = d;
                     } else {
@@ -148,20 +184,31 @@ Vue.component("ccm-region", {
                     v-on:click="onEdit"
                     :disabled="mode === 'Edit'"
                     class="ccm-btn normal submit-btn">Edit</button>
+
+                <button
+                    v-on:click="onDelete"
+                    class="ccm-btn normal delete-btn">Delete</button>
             </div>
         </div>
         
+        <div v-if="mode === 'Delete'"
+            class="editor-wrapper">
+            <ccm-region-deleter
+                v-bind:id='id'
+                v-bind:name='name'
+                v-bind:is-root='!isChild'
+                v-on:cancel="onCancelled" />
+        </div>
 
-        <div>
+        <div v-if="mode === 'Edit'">
             <ccm-region-editor 
                 v-bind:id='id' 
-                v-if="mode === 'Edit'" 
                 v-on:cancel="onCancelled">
             </ccm-region-editor>
         </div>
 
         <div v-if="isExpanded"
-            class="region-constructor-wrapper">
+            class="editor-wrapper">
             <ccm-region-constructor
                 v-if="isExpanded"
                 v-bind:parent-id = 'id'
@@ -204,6 +251,9 @@ Vue.component("ccm-region", {
         },
         onCollapse: function () {
             this.isExpanded = false;
+        },
+        onDelete: function () {
+            this.mode = "Delete";
         },
         onRegionCreated: function (d) {
             this.childRegions.push(d);
