@@ -13,35 +13,59 @@ Vue.component("ccm-region-deleter", {
     props: ['id', 'name', 'is-root'],
     template:
     `<div class="ccm-region-deleter">
-        <div class="action-container">
+        <div class="action-container"
+            v-if="!isLoading">
             <button
                 v-on:click="onCancel"
                 class="ccm-btn normal cancel-btn">Cancel</button>
+            
+            <button class="ccm-btn normal delete-btn"
+                v-on:click="onDelete">Delete</button>
+                
         </div>
-        <div class="form-container">
+        <div class="form-container"
+            v-if="!isLoading">
             <div class="warning">
-                <div class="ccm-input-container">
-                    <input type="radio" v-bind:name="'delete-children-'+id" value="false" v-model="deleteChildren" />
+                <div class="ccm-input-container normal">
+                    <input class="ccm-input normal"
+                        type="radio" v-bind:name="'delete-children-'+id" value="false" v-model="model.deleteChildren" />
+                    <label />
                     <span v-if="!isRoot">Delete <b>{{name}}</b> &amp; merge child regions into parent</span>
                     <span v-if="isRoot">Delete <b>{{name}}</b> - child regions will become new root regions</span>
                 </div>
-                <div class="ccm-input-container">
-                    <input type="radio" v-bind:name="'delete-children-'+id" value="true" v-model="deleteChildren" />
+                <div class="ccm-input-container normal">
+                    <input class="ccm-input normal"
+                        type="radio" v-bind:name="'delete-children-'+id" value="true" v-model="model.deleteChildren" />
+                    <label />
                     <span>Delete <b>{{name}}</b> as well as entire region subtree</span>
                 </div>
             </div>
         </div>
+
+        <ccm-loader v-if="isLoading" />
     </div>`,
 
     methods: {
         onCancel: function () {
             this.$emit("cancel");
+        },
+        onDelete: function () {
+            this.isLoading = true;
+            this.$emit("deleted", this.model);
+            this.model = this.init();
+        },
+        init: function () {
+            return {
+                id: this.id,
+                deleteChildren: false
+            };
         }
     },
 
     data: function () {
         return {
-            deleteChildren: false
+            isLoading: false,
+            model: this.init()
         }
     }
 });
@@ -197,7 +221,8 @@ Vue.component("ccm-region", {
                 v-bind:id='id'
                 v-bind:name='name'
                 v-bind:is-root='!isChild'
-                v-on:cancel="onCancelled" />
+                v-on:cancel="onCancelled"
+                v-on:deleted="onRegionDeleted" />
         </div>
 
         <div v-if="mode === 'Edit'">
@@ -254,6 +279,11 @@ Vue.component("ccm-region", {
         },
         onDelete: function () {
             this.mode = "Delete";
+        },
+        onRegionDeleted: function (d) {
+            console.log("-> deleted :");
+            console.log(d);
+            this.mode = "None";
         },
         onRegionCreated: function (d) {
             this.childRegions.push(d);
