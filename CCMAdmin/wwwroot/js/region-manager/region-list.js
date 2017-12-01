@@ -51,8 +51,23 @@ Vue.component("ccm-region-deleter", {
         },
         onDelete: function () {
             this.isLoading = true;
-            this.$emit("deleted", this.model);
-            this.model = this.init();
+            
+            $.ajax({
+                method: "DELETE",
+                url: "/region-manager/region-list/delete",
+                contentType: "application/json; charset=UTF-8",
+                data: JSON.stringify(this.model),
+                success: $.proxy(function (d) {
+                    this.isLoading = false;
+
+                    if (!d.success) {
+                        //TODO : what will happen when this fails?
+                    } else {
+                        this.$emit("deleted", { deletedId: this.model.id, promotedRegions: d.data });
+                        this.model = this.init();
+                    }
+                }, this)
+            });
         },
         init: function () {
             return {
@@ -283,6 +298,27 @@ Vue.component("ccm-region", {
         onRegionDeleted: function (d) {
             console.log("-> deleted :");
             console.log(d);
+
+            //var f = function (x) {
+            //    console.log("-> " + x.id);
+            //    console.log("-> " + d.deletedId);
+            //
+            //    return x.id === d.deletedId;
+            //};
+            //
+            //console.log(this.childRegions);
+            //
+            //var i = this.childRegions.findIndex(f);
+            //
+            //console.log(i);
+            //
+            //if (i >= 0) {
+            //    this.childRegions.splice(i, 1);
+            //}
+            //
+            //this.childRegions
+            //    .push(d.promotedRegions);
+
             this.mode = "None";
         },
         onRegionCreated: function (d) {
