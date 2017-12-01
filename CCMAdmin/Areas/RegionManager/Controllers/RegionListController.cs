@@ -112,7 +112,7 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
                 var paramId = new NpgsqlParameter("id", DbType.Int32);
                 paramId.Value = request.Id;
 
-                var paramDeleteChildren = new NpgsqlParameter("delete_children", DbType.String);
+                var paramDeleteChildren = new NpgsqlParameter("delete_children", DbType.Boolean);
                 paramDeleteChildren.Value = request.DeleteChildren;
 
                 using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
@@ -129,8 +129,7 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
                     }
                 }
 
-
-                return Json(new { success = true, data = regions.First() });
+                return Json(new { success = true, data = regions });
             }
 
             return Json(new { success = false });
