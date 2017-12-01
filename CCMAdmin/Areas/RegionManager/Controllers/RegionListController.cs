@@ -65,7 +65,8 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
 
         [HttpPut]
         [Route("add")]
-        public JsonResult Add([FromBody] RegionRequest request)
+        public JsonResult Add(
+            [FromBody] RegionRequest request)
         {
             if (this.ModelState.IsValid)
             {
@@ -97,6 +98,43 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
 
             return Json(new { success = false, name = $"Error: [{ModelState["Name"].Errors.FirstOrDefault()?.ErrorMessage}]" });
         }
+
+        [HttpDelete]
+        [Route("delete")]
+        public JsonResult Delete(
+            [FromBody] RegionDeleteRequest request)
+        {
+            if (this.ModelState.IsValid)
+            {
+
+                var regions = new List<Region>();
+
+                var paramId = new NpgsqlParameter("id", DbType.Int32);
+                paramId.Value = request.Id;
+
+                var paramDeleteChildren = new NpgsqlParameter("delete_children", DbType.String);
+                paramDeleteChildren.Value = request.DeleteChildren;
+
+                using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
+                using (var comm = conn.FunctionCommand("delete_region", paramId, paramDeleteChildren))
+                using (var reader = comm.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var region = new Region();
+                        region.Id = reader.GetInt32(reader.GetOrdinal("id"));
+                        region.Name = reader.GetString(reader.GetOrdinal("name"));
+
+                        regions.Add(region);
+                    }
+                }
+
+
+                return Json(new { success = true, data = regions.First() });
+            }
+
+            return Json(new { success = false });
+        }
     }
 
     public class RegionRequest
@@ -110,6 +148,13 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         public string Name { get; set; }
     }
 
+    public class RegionDeleteRequest
+    {
+        [Range(0, int.MaxValue)]
+        public int Id { get; set; }
+
+        public bool DeleteChildren { get; set; }
+    }
 
     public static class NpgsqlExtensions
     {
