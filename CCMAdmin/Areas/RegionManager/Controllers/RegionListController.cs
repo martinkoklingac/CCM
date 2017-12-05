@@ -14,25 +14,24 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
     public class RegionListController :
         Controller
     {
+        #region CONSTRUCTORS
+        public RegionListController(
+            IRegionService regionService)
+        {
+            this.RegionService = regionService;
+        }
+        #endregion
+
+        #region PRIVATE PROPERTIES
+        private IRegionService RegionService { get; }
+        #endregion
+
         [Route("")]
         public IActionResult Index()
         {
-            var regions = new List<Region>();
+            var regions = this.RegionService
+                .GetRegionPrimogenitors();
             var model = new RegionListModel(regions);
-
-            using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-            using (var comm = conn.FunctionCommand("get_region_primogenitors"))
-            using (var reader = comm.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    var region = new Region();
-                    region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                    region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                    regions.Add(region);
-                }
-            }
 
             return View(model);
         }
@@ -41,24 +40,8 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         [Route("get-children")]
         public JsonResult GetChildren(int parentId)
         {
-            var regions = new List<Region>();
-
-            var paramParentId = new NpgsqlParameter("parent_id", DbType.Int32);
-            paramParentId.Value = parentId;
-
-            using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-            using (var comm = conn.FunctionCommand("get_region_children", paramParentId))
-            using (var reader = comm.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    var region = new Region();
-                    region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                    region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                    regions.Add(region);
-                }
-            }
+            var regions = this.RegionService
+                .GetRegionChildren(parentId);
 
             return Json(regions);
         }
@@ -153,29 +136,5 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         public int Id { get; set; }
 
         public bool DeleteChildren { get; set; }
-    }
-
-    public static class NpgsqlExtensions
-    {
-        public static NpgsqlConnection Init(this NpgsqlConnection connection)
-        {
-            connection.Open();
-            return connection;
-        }
-
-        public static NpgsqlCommand FunctionCommand(this NpgsqlConnection connection,
-            string function,
-            params NpgsqlParameter[] parameters)
-        {
-            var command = new NpgsqlCommand(function, connection)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            if (parameters.Any())
-                command.Parameters.AddRange(parameters);
-
-            return command;
-        }
     }
 }
