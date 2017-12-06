@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,9 @@ namespace CCMAdmin
     {
         public Startup(IHostingEnvironment env)
         {
+            //Prevent telemetry logs in Debug window
+            TelemetryConfiguration.Active.DisableTelemetry = true;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -28,18 +32,31 @@ namespace CCMAdmin
             services.AddMvc();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IUnitOfWorkConfig>((sp) => new UnitOfWorkConfig(this.Configuration.GetConnectionString("CCM")));
             services.AddSingleton<IUnitOfWorkProvider, UnitOfWorkProvider>();
             services.AddSingleton<IRegionService, RegionService>();
+        }
+
+        private static bool Check(HttpContext ctx)
+        {
+            var isCss = ctx.Request.Path.StartsWithSegments("/css");
+            var isLib = ctx.Request.Path.StartsWithSegments("/lib");
+            var isJs = ctx.Request.Path.StartsWithSegments("/js");
+            var isImages = ctx.Request.Path.StartsWithSegments("/images");
+
+            return !isCss
+                && !isLib
+                && !isJs
+                && !isImages;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory.AddDebug((x, l) => x.StartsWith("CCMAdmin"));
 
-            app.UseMiddleware<UnitOfWorkMiddleware>();
-
+            app.UseWhen(Check, builder => builder.UseMiddleware<UnitOfWorkMiddleware>());
 
             if (env.IsDevelopment())
             {
