@@ -17,8 +17,8 @@ namespace CCMAdmin
 
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
@@ -30,6 +30,12 @@ namespace CCMAdmin
         {
             // Add framework services.
             services.AddMvc();
+            services.AddLogging(builder =>
+            {
+                builder.AddConfiguration(Configuration.GetSection("Logging"))
+                    //.AddConsole()
+                    .AddDebug();
+            });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IUnitOfWorkConfig>((sp) => new UnitOfWorkConfig(this.Configuration.GetConnectionString("CCM")));
@@ -53,9 +59,6 @@ namespace CCMAdmin
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug((x, l) => x.StartsWith("CCMAdmin"));
-
             app.UseWhen(Check, builder => builder.UseMiddleware<UnitOfWorkMiddleware>());
 
             if (env.IsDevelopment())
