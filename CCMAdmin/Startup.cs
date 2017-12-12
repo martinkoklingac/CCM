@@ -43,24 +43,9 @@ namespace CCMAdmin
             services.AddSingleton<IRegionService, RegionService>();
         }
 
-        private static bool Check(HttpContext ctx)
-        {
-            var isCss = ctx.Request.Path.StartsWithSegments("/css");
-            var isLib = ctx.Request.Path.StartsWithSegments("/lib");
-            var isJs = ctx.Request.Path.StartsWithSegments("/js");
-            var isImages = ctx.Request.Path.StartsWithSegments("/images");
-
-            return !isCss
-                && !isLib
-                && !isJs
-                && !isImages;
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseWhen(Check, builder => builder.UseMiddleware<UnitOfWorkMiddleware>());
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
