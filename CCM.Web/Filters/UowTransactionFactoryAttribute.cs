@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -21,9 +22,11 @@ namespace CCM.Data.Web.Filters
         #region PUBLIC METHODS
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
-            var logger = (ILogger<UowTransactionFilter>)serviceProvider
-                .GetService(typeof(ILogger<UowTransactionFilter>));
-            return new UowTransactionFilter(logger);
+            var logger = (ILogger<UowTransactionFilter>)serviceProvider.GetService(typeof(ILogger<UowTransactionFilter>));
+            var httpContextAccessor = (IHttpContextAccessor)serviceProvider.GetService(typeof(IHttpContextAccessor));
+            var unitOfWorkProvider = (IUnitOfWorkProvider)serviceProvider.GetService(typeof(IUnitOfWorkProvider));
+
+            return new UowTransactionFilter(logger, httpContextAccessor, unitOfWorkProvider);
         }
         #endregion
     }
