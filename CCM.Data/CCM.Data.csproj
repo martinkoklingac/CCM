@@ -9,4 +9,8 @@
     <PackageReference Include="Npgsql" Version="3.2.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CCM.Data.Interface\CCM.Data.Interface.csproj" />
+  </ItemGroup>
+
 </Project>

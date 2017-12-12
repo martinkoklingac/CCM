@@ -6,7 +6,7 @@ using System.Data;
 namespace CCM.Data
 {
     public class UnitOfWork :
-        IDisposable
+        IUnitOfWork
     {
         #region PRIVATE FIELDS
         private readonly IUnitOfWorkConfig _config;
@@ -103,15 +103,4 @@ namespace CCM.Data
         }
         #endregion
     }
-
-    public class UnitOfWorkException :
-        Exception
-    {
-        #region CONSTRUCTORS
-        public UnitOfWorkException(string message, Exception ex) :
-            base(message, ex)
-        { }
-        #endregion
-    }
-
 }
