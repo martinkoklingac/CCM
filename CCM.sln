@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCM", "CCM\CCM.csproj", "{8455C807-61BE-4929-97C9-6DCECF0FC58F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCMAdmin", "CCMAdmin\CCMAdmin.csproj", "{28F8C0F0-7469-459F-A9CF-D11F558B9959}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCM.Data.Web", "CCM.Web\CCM.Data.Web.csproj", "{C248795A-D87F-449F-8167-BD9C066AA119}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCM.Data.Web", "CCM.Web\CCM.Data.Web.csproj", "{C248795A-D87F-449F-8167-BD9C066AA119}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCM.Data", "CCM.Data\CCM.Data.csproj", "{AA4ACD3F-AEC5-483C-8BC7-838DAD16B07E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CCM.Data", "CCM.Data\CCM.Data.csproj", "{AA4ACD3F-AEC5-483C-8BC7-838DAD16B07E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CCM.Data.Interface", "CCM.Data.Interface\CCM.Data.Interface.csproj", "{C8FF087E-ABF1-4A19-8ED5-2193D1241E6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AA4ACD3F-AEC5-483C-8BC7-838DAD16B07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA4ACD3F-AEC5-483C-8BC7-838DAD16B07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA4ACD3F-AEC5-483C-8BC7-838DAD16B07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8FF087E-ABF1-4A19-8ED5-2193D1241E6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8FF087E-ABF1-4A19-8ED5-2193D1241E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8FF087E-ABF1-4A19-8ED5-2193D1241E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8FF087E-ABF1-4A19-8ED5-2193D1241E6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
