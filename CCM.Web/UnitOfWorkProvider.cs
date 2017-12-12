@@ -5,8 +5,8 @@ namespace CCM.Data.Web
 {
     public interface IUnitOfWorkProvider
     {
-        UnitOfWork CreateUnit();
-        UnitOfWork GetUnit();
+        IUnitOfWork CreateUnit();
+        IUnitOfWork GetUnit();
     }
 
     public class UnitOfWorkProvider :
@@ -31,18 +31,24 @@ namespace CCM.Data.Web
         #endregion
 
         #region PUBLIC METHODS
-        public UnitOfWork CreateUnit()
+        public IUnitOfWork CreateUnit()
         {
             var logger = this._loggerFactory
                 .CreateLogger<UnitOfWork>();
 
-            return new UnitOfWork(
+            var uow = new UnitOfWork(
                 this._httpContextAccessor.HttpContext.TraceIdentifier, 
                 this._unitOfWorkConfig,
                 logger);
+
+            this._httpContextAccessor
+                .HttpContext
+                .Items[typeof(UnitOfWork)] = uow;
+
+            return uow;
         }
 
-        public UnitOfWork GetUnit()
+        public IUnitOfWork GetUnit()
         {
             var uow = this._httpContextAccessor
                 .HttpContext

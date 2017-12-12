@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
@@ -11,34 +10,31 @@ namespace CCM.Data.Web.Filters
         private class UowTransactionFilter :
             IAsyncActionFilter
         {
+            #region PRIVATE FIELDS
             private readonly ILogger<UowTransactionFilter> _logger;
-            private readonly IHttpContextAccessor _httpContextAccessor;
             private readonly IUnitOfWorkProvider _unitOfWorkProvider;
+            #endregion
 
+            #region CONSTRUCTORS
             public UowTransactionFilter(
                 ILogger<UowTransactionFilter> logger,
-                IHttpContextAccessor httpContextAccessor,
                 IUnitOfWorkProvider unitOfWorkProvider)
             {
                 _logger = logger;
-                _httpContextAccessor = httpContextAccessor;
                 _unitOfWorkProvider = unitOfWorkProvider;
             }
+            #endregion
 
+            #region PUBLIC METHODS
             public async Task OnActionExecutionAsync(
                 ActionExecutingContext context, 
                 ActionExecutionDelegate next)
             {
                 this._logger.LogTrace("before action");
                 
-                var httpContext = this._httpContextAccessor.HttpContext;
-
                 //Construct UnitOfWork for this request
                 using (var unitOfWork = this._unitOfWorkProvider.CreateUnit())
                 {
-                    //Bind new UnitOfWork with current request
-                    httpContext.Items[typeof(UnitOfWork)] = unitOfWork;
-
                     //If UoW cannot even start, this request will be short circuited right away
                     unitOfWork.Begin();
 
@@ -61,6 +57,7 @@ namespace CCM.Data.Web.Filters
 
                 this._logger.LogTrace("after action");
             }
+            #endregion
         }
         #endregion
     }
