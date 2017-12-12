@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CCMAdmin
+namespace CCM.Data.Web
 {
     public interface IUnitOfWorkProvider
     {
