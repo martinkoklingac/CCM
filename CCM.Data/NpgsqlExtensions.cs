@@ -2,7 +2,7 @@
 using System.Data;
 using System.Linq;
 
-namespace CCMAdmin
+namespace CCM.Data
 {
     public static class NpgsqlExtensions
     {

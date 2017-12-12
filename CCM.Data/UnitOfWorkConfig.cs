@@ -1,4 +1,4 @@
-﻿namespace CCMAdmin
+﻿namespace CCM.Data
 {
     public interface IUnitOfWorkConfig
     {

@@ -3,7 +3,7 @@ using Npgsql;
 using System;
 using System.Data;
 
-namespace CCMAdmin
+namespace CCM.Data
 {
     public class UnitOfWork :
         IDisposable
