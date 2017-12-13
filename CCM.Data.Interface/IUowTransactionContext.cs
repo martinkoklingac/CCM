@@ -2,7 +2,7 @@
 
 namespace CCM.Data
 {
-    public interface IUnitOfWork :
+    public interface IUowTransactionContext :
         IDisposable
     {
         string Id { get; }
