@@ -5,8 +5,8 @@ namespace CCM.Data.Web
 {
     public interface IUnitOfWorkProvider
     {
-        IUnitOfWork CreateUnit();
-        IUnitOfWork GetUnit();
+        IUowTransactionContext CreateUnit();
+        IUowTransactionContext GetUnit();
     }
 
     public class UnitOfWorkProvider :
@@ -31,7 +31,7 @@ namespace CCM.Data.Web
         #endregion
 
         #region PUBLIC METHODS
-        public IUnitOfWork CreateUnit()
+        public IUowTransactionContext CreateUnit()
         {
             var logger = this._loggerFactory
                 .CreateLogger<UnitOfWork>();
@@ -48,7 +48,7 @@ namespace CCM.Data.Web
             return uow;
         }
 
-        public IUnitOfWork GetUnit()
+        public IUowTransactionContext GetUnit()
         {
             var uow = this._httpContextAccessor
                 .HttpContext
