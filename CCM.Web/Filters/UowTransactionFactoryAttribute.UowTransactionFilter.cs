@@ -8,7 +8,7 @@ namespace CCM.Data.Web.Filters
     {
         #region INTERNAL TYPES
         private class UowTransactionFilter :
-            IAsyncActionFilter
+            IAsyncResourceFilter
         {
             #region PRIVATE FIELDS
             private readonly ILogger<UowTransactionFilter> _logger;
@@ -26,36 +26,43 @@ namespace CCM.Data.Web.Filters
             #endregion
 
             #region PUBLIC METHODS
-            public async Task OnActionExecutionAsync(
-                ActionExecutingContext context, 
-                ActionExecutionDelegate next)
+            public async Task OnResourceExecutionAsync(
+                ResourceExecutingContext context,
+                ResourceExecutionDelegate next)
             {
-                this._logger.LogTrace("before action");
+                this._logger.LogTrace($"[{context.ActionDescriptor.DisplayName}] -> Starting resource execution");
                 
-                //Construct UnitOfWork for this request
-                using (var unitOfWork = this._unitOfWorkProvider.CreateUnit())
+                using (var work = this._unitOfWorkProvider.CreateUnit())
                 {
-                    //If UoW cannot even start, this request will be short circuited right away
-                    unitOfWork.Begin();
-
                     try
                     {
-                        //Attempt to execute request that uses unitOfWork resources
-                        var resultContext = await next();
+                        //If UoW cannot even start, this request will be short circuited right away
+                        work.Begin();
 
-                        //Attempt to commit any pending transaction
-                        //If this breaks then we will move to catch block that will attempt to roll back
-                        unitOfWork.Commit();
+                        //Attempt to execute request that uses unitOfWork resources
+                        var result = await next();
+
+                        if (result.Exception != null)
+                        {
+                            //Attempt to roll back
+                            work.Rollback();
+                        }
+                        else
+                        {
+                            //Attempt to commit any pending transaction
+                            //If this breaks then we will move to catch block that will attempt to roll back
+                            work.Commit();
+                        }
                     }
                     catch
                     {
                         //Attempt to roll back
-                        unitOfWork.Rollback();
+                        work.Rollback();
                         throw;  //Throw the originating exception
                     }
                 }//End using
 
-                this._logger.LogTrace("after action");
+                this._logger.LogTrace($"[{context.ActionDescriptor.DisplayName}] -> Resource execution complete");
             }
             #endregion
         }
