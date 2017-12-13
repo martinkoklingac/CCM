@@ -1,16 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Npgsql;
-using System;
-using System.Data;
 
 namespace CCM.Data
 {
     public class UnitOfWork :
-        IUnitOfWork
+        AbstractUnitOfWork
     {
         #region PRIVATE FIELDS
-        private readonly IUnitOfWorkConfig _config;
-        private readonly NpgsqlConnection _connection;
         private readonly ILogger<UnitOfWork> _logger;
         #endregion
 
@@ -18,89 +14,32 @@ namespace CCM.Data
         public UnitOfWork(
             string id,
             IUnitOfWorkConfig config,
-            ILogger<UnitOfWork> logger)
+            ILogger<UnitOfWork> logger) : base(id, config)
         {
-            this.Id = id;
-            this._config = config;
             this._logger = logger;
-
-            this.Log("Creating NpgsqlConnection");
-            this._connection = new NpgsqlConnection(
-                this._config.ConnectionString)
-                .Init();
         }
-        #endregion
-
-        #region PUBLIC PROPERTIES
-        public string Id { get; }
-        #endregion
-
-        #region PRIVATE PROPERTIES
-        private NpgsqlTransaction Transaction { get; set; }
         #endregion
 
         #region PUBLIC METHODS
-        public NpgsqlConnection GetConnection() => this._connection;
+        public NpgsqlConnection GetConnection() => base.Connection;
+        #endregion
 
-        public void Begin()
-        {
-            try
-            {
-                this.Log("Begin transaction");
-                this.Transaction = this._connection
-                    .BeginTransaction(IsolationLevel.ReadCommitted);
-            }
-            catch (Exception ex)
-            {
-                throw new UnitOfWorkException(
-                    $"[{Id}] Begin() failed", ex);
-            }
-        }
+        #region PROTECTED METHODS
+        protected override void OnBeginInit() => this.Log("Creating new transaction");
+        protected override void OnBeginComplete() => this.Log("Transaction started");
+        protected override void OnBeginError() => this.Log("Transaction creation failed");
 
-        public void Commit()
-        {
-            try
-            {
-                this.Log($"Begin commit transaction IsComplete:{this.Transaction.IsCompleted}");
-                if (this.Transaction != null && !this.Transaction.IsCompleted)
-                {
-                    this.Transaction.Commit();
-                    this.Log($"Transaction committed IsComplete:{this.Transaction.IsCompleted}");
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new UnitOfWorkException(
-                    $"[{Id}] Commit() failed", ex);
-            }
-        }
+        protected override void OnCommitInit() => this.Log("Committing transaction");
+        protected override void OnCommitComplete() => this.Log("Transaction committed");
+        protected override void OnCommitError() => this.Log("Transaction commit failed");
 
-        public void Rollback()
-        {
-            try
-            {
-                if (this.Transaction != null)
-                    this.Transaction.Rollback();
-            }
-            catch (Exception ex)
-            {
-                throw new UnitOfWorkException(
-                    $"[{Id}] Rollback() failed", ex);
-            }
-        }
-
-        public void Dispose()
-        {
-            this.Transaction.Dispose();
-            this._connection.Dispose();
-        }
+        protected override void OnRollbackInit() => this.Log("Rolling back transaction");
+        protected override void OnRollbackComplete() => this.Log("Transaction rolled back");
+        protected override void OnRollbackError() => this.Log("Rollback failed");
         #endregion
 
         #region PRIVATE METHODS
-        private void Log(string message)
-        {
-            this._logger.LogTrace($"Request[{Id}] - {message}");
-        }
+        private void Log(string message) => this._logger.LogTrace($"Request[{Id}] -> {message}");
         #endregion
     }
 }
