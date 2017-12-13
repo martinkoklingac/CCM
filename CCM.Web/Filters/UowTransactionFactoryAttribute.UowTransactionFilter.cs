@@ -32,7 +32,7 @@ namespace CCM.Data.Web.Filters
             {
                 this._logger.LogTrace($"[{context.ActionDescriptor.DisplayName}] -> Starting resource execution");
                 
-                using (var work = this._unitOfWorkProvider.CreateUnit())
+                using (var work = this._unitOfWorkProvider.CreateTransactionContext())
                 {
                     try
                     {

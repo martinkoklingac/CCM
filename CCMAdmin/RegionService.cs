@@ -31,7 +31,7 @@ namespace CCMAdmin
         #region PUBLIC METHODS
         public IReadOnlyCollection<Region> GetRegionPrimogenitors()
         {
-            var uow = this.UnitOfWorkProvider.GetUnit();
+            var uow = this.UnitOfWorkProvider.GetTransactionContext();
 
             var regions = new List<Region>();
 
