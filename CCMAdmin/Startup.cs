@@ -41,7 +41,9 @@ namespace CCMAdmin
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IUnitOfWorkConfig>((sp) => new UnitOfWorkConfig(this.Configuration.GetConnectionString("CCM")));
-            services.AddSingleton<IUnitOfWorkProvider, UnitOfWorkProvider>();
+            services.AddSingleton<UnitOfWorkProvider>();
+            services.AddSingleton<ITransactionContextProvider>(sp => sp.GetService<UnitOfWorkProvider>());
+            services.AddSingleton<ISessionContextProvider>(sp => sp.GetService<UnitOfWorkProvider>());
             services.AddSingleton<IRegionService, RegionService>();
         }
 
