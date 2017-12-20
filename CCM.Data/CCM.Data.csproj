@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CCM.Data.Interface\CCM.Data.Interface.csproj" />
+    <ProjectReference Include="..\Core.Utils\Core.Utils.csproj" />
   </ItemGroup>
 
 </Project>
