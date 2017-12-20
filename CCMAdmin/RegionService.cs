@@ -1,16 +1,34 @@
-﻿using CCM.Data;
+﻿using CCM.Data.SchemaUtils;
 using CCM.Data.Web;
 using CCMAdmin.Areas.RegionManager.Models.RegionList;
-using Npgsql;
 using System.Collections.Generic;
-using System.Data;
 
 namespace CCMAdmin
 {
     public interface IRegionService
     {
         IReadOnlyCollection<Region> GetRegionPrimogenitors();
-        IReadOnlyCollection<Region> GetRegionChildren(int parentId);
+        IReadOnlyCollection<Region> GetRegionChildren(ParentId parentId);
+    }
+
+    public struct ParentId
+    {
+        #region CONSTRUCTORS
+        private ParentId(int id)
+        {
+            this.Id = id;
+        }
+        #endregion
+
+        #region PUBLIC PROPERTIES
+        [Meta(Name = "parent_id")]
+        public int Id { get; }
+        #endregion
+
+        #region PUBLIC METHODS
+        public static implicit operator ParentId(int id) => new ParentId(id);
+        public static implicit operator int(ParentId parentId) => parentId.Id;
+        #endregion
     }
 
     public class RegionService :
@@ -35,30 +53,17 @@ namespace CCMAdmin
 
             this._sessionContextProvider
                 .GetSessionContext()
-                .ExecFunction("get_region_primogenitors", regions);
+                .ExecFunctionCollection("get_region_primogenitors", regions);
 
             return regions;
         }
-        public IReadOnlyCollection<Region> GetRegionChildren(int parentId)
+        public IReadOnlyCollection<Region> GetRegionChildren(ParentId parentId)
         {
             var regions = new List<Region>();
 
-            var paramParentId = new NpgsqlParameter("parent_id", DbType.Int32);
-            paramParentId.Value = parentId;
-
-            using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-            using (var comm = conn.FunctionCommand("get_region_children", paramParentId))
-            using (var reader = comm.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    var region = new Region();
-                    region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                    region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                    regions.Add(region);
-                }
-            }
+            this._sessionContextProvider
+                .GetSessionContext()
+                .ExecFunctionCollection("get_region_children", parentId, regions);
 
             return regions;
         }

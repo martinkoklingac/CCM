@@ -9,32 +9,31 @@ namespace CCM.Data
         IUowSessionContext
     {
         #region PUBLIC METHODS
-        public void ExecFunction<TParam, TResult>(string function, TParam param, TResult result)
+        public void ExecFunctionSingle<TParam, TResult>(string function, TParam param, TResult result)
             where TResult : new()
         {
             throw new NotImplementedException();
         }
 
-        public void ExecFunction<TParam, TResult>(string function, TParam param, ICollection<TResult> result)
+        public void ExecFunctionCollection<TParam, TResult>(string function, TParam param, ICollection<TResult> result)
             where TResult : new()
         {
-            var parameters = param.GetParameterCollection().ToArray();
+            var parameters = param.GetParameters().ToArray();
             using (var command = this._connection.FunctionCommand(function, parameters))
             using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    var item = new TResult();
-                    item.Map(reader);
+                    var item = new TResult().Map(reader);
                     result.Add(item);
                 }
             }
         }
 
-        public void ExecFunction<TResult>(string function, ICollection<TResult> result)
+        public void ExecFunctionCollection<TResult>(string function, ICollection<TResult> result)
             where TResult : new()
         {
-            ExecFunction(function, default(object), result);
+            ExecFunctionCollection(function, default(object), result);
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using System.Data;
 using System.Reflection;
 
 namespace CCM.Data.SchemaUtils
@@ -23,6 +24,24 @@ namespace CCM.Data.SchemaUtils
                 value = reader.GetString(ordinal);
 
             field.Info.SetValue(result, value);
+        }
+
+        private static NpgsqlParameter MapParameter<TParam>(
+            (PropertyInfo Info, MetaAttribute Meta) field,
+            TParam parameter)
+        {
+            var dbType = default(DbType);
+            if (field.Info.PropertyType == typeof(Int32))
+                dbType = DbType.Int32;
+            else if (field.Info.PropertyType == typeof(Int64))
+                dbType = DbType.Int64;
+            else if (field.Info.PropertyType == typeof(string))
+                dbType = DbType.String;
+
+            var val = field.Info.GetValue(parameter);
+            var name = field.Meta.Name;
+
+            return new NpgsqlParameter(name, dbType) { Value = val };
         }
         #endregion
     }
