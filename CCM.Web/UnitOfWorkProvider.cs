@@ -3,15 +3,21 @@ using Microsoft.Extensions.Logging;
 
 namespace CCM.Data.Web
 {
-    public interface IUnitOfWorkProvider
+    public interface ITransactionContextProvider
     {
         IUowTransactionContext CreateTransactionContext();
         IUowTransactionContext GetTransactionContext();
+    }
+
+    public interface ISessionContextProvider
+    {
         IUowSessionContext GetSessionContext();
     }
 
+
     public class UnitOfWorkProvider :
-        IUnitOfWorkProvider
+        ITransactionContextProvider,
+        ISessionContextProvider
     {
         #region PRIVATE FIELDS
         private readonly IHttpContextAccessor _httpContextAccessor;

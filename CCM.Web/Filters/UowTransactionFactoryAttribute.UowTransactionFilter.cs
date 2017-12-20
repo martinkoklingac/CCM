@@ -12,13 +12,13 @@ namespace CCM.Data.Web.Filters
         {
             #region PRIVATE FIELDS
             private readonly ILogger<UowTransactionFilter> _logger;
-            private readonly IUnitOfWorkProvider _unitOfWorkProvider;
+            private readonly ITransactionContextProvider _unitOfWorkProvider;
             #endregion
 
             #region CONSTRUCTORS
             public UowTransactionFilter(
                 ILogger<UowTransactionFilter> logger,
-                IUnitOfWorkProvider unitOfWorkProvider)
+                ITransactionContextProvider unitOfWorkProvider)
             {
                 _logger = logger;
                 _unitOfWorkProvider = unitOfWorkProvider;

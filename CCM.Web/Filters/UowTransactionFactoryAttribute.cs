@@ -22,7 +22,7 @@ namespace CCM.Data.Web.Filters
         public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
         {
             var logger = (ILogger<UowTransactionFilter>)serviceProvider.GetService(typeof(ILogger<UowTransactionFilter>));
-            var unitOfWorkProvider = (IUnitOfWorkProvider)serviceProvider.GetService(typeof(IUnitOfWorkProvider));
+            var unitOfWorkProvider = (ITransactionContextProvider)serviceProvider.GetService(typeof(ITransactionContextProvider));
 
             return new UowTransactionFilter(logger, unitOfWorkProvider);
         }
