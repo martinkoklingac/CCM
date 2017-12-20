@@ -22,9 +22,19 @@ namespace CCM.Data
             using (var command = this._connection.FunctionCommand(function, parameters))
             using (var reader = command.ExecuteReader())
             {
-                var reault = new TResult();
-                result.Map(reader);
+                while (reader.Read())
+                {
+                    var item = new TResult();
+                    item.Map(reader);
+                    result.Add(item);
+                }
             }
+        }
+
+        public void ExecFunction<TResult>(string function, ICollection<TResult> result)
+            where TResult : new()
+        {
+            ExecFunction(function, default(object), result);
         }
         #endregion
     }

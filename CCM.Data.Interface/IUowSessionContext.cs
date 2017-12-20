@@ -6,6 +6,8 @@ namespace CCM.Data
     {
         void ExecFunction<TParam, TResult>(string function, TParam param, TResult result)
             where TResult : new();
+        void ExecFunction<TResult>(string function, ICollection<TResult> result)
+            where TResult : new();
         void ExecFunction<TParam, TResult>(string function, TParam param, ICollection<TResult> result)
             where TResult : new();
     }
