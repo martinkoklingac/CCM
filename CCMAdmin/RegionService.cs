@@ -16,38 +16,26 @@ namespace CCMAdmin
     public class RegionService :
         IRegionService
     {
-        #region CONSTRUCTORS
-        public RegionService(
-            IUnitOfWorkProvider unitOfWorkProvider)
-        {
-            this.UnitOfWorkProvider = unitOfWorkProvider;
-        }
+        #region PRIVATE FIELDS
+        private readonly ISessionContextProvider _sessionContextProvider;
         #endregion
 
-        #region PRIVATE PROPERTIES
-        private IUnitOfWorkProvider UnitOfWorkProvider { get; }
+        #region CONSTRUCTORS
+        public RegionService(
+            ISessionContextProvider sessionContextProvider)
+        {
+            this._sessionContextProvider = sessionContextProvider;
+        }
         #endregion
 
         #region PUBLIC METHODS
         public IReadOnlyCollection<Region> GetRegionPrimogenitors()
         {
-            var uow = this.UnitOfWorkProvider.GetTransactionContext();
-
             var regions = new List<Region>();
 
-            using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-            using (var comm = conn.FunctionCommand("get_region_primogenitors"))
-            using (var reader = comm.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    var region = new Region();
-                    region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                    region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                    regions.Add(region);
-                }
-            }
+            this._sessionContextProvider
+                .GetSessionContext()
+                .ExecFunction("get_region_primogenitors", regions);
 
             return regions;
         }

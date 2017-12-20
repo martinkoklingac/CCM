@@ -1,4 +1,5 @@
 using CCM.Data;
+using CCM.Data.Web.Filters;
 using CCMAdmin.Areas.RegionManager.Models.RegionList;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
 {
     [Area("RegionManager")]
     [Route("region-manager/region-list")]
+    [UowTransactionFactory]
     public class RegionListController :
         Controller
     {
