@@ -51,7 +51,7 @@ Vue.component("ccm-region-deleter", {
         },
         onDelete: function () {
             this.isLoading = true;
-            
+
             $.ajax({
                 method: "DELETE",
                 url: "/region-manager/region-list/delete",
@@ -104,7 +104,12 @@ Vue.component("ccm-region-editor", {
 });
 
 Vue.component("ccm-region-constructor", {
-    props: ['parent-id'],
+    props: {
+        parentId: {
+            type: Number,
+            default: null
+        }
+    },
     template:
     `<div class="ccm-region-constructor">
         <div class="action-container"
@@ -139,6 +144,9 @@ Vue.component("ccm-region-constructor", {
     </div>`,
 
     methods: {
+        isChild: function () {
+            return typeof (this.parentId) === "number";
+        },
         onAddNew: function () {
             this.isFormVisible = true;
         },
@@ -148,9 +156,14 @@ Vue.component("ccm-region-constructor", {
         onAdd: function () {
             this.isLoading = true;
 
+            let addChildUrl = "/region-manager/region-list/add-child";
+            let addRootUrl = "/region-manager/region-list/add-root";
+
             $.ajax({
                 method: "PUT",
-                url: "/region-manager/region-list/add",
+                url: this.isChild()
+                    ? addChildUrl
+                    : addRootUrl,
                 contentType: "application/json; charset=UTF-8",
                 data: JSON.stringify(this.model),
                 success: $.proxy(function (d) {
@@ -202,7 +215,19 @@ Vue.component("ccm-region-constructor", {
 });
 
 Vue.component("ccm-region", {
-    props: ['id', 'parent-id', 'name'],
+    props: {
+        id: {
+            type: Number
+        },
+        parentId: {
+            type: Number,
+            default: null
+        },
+        name: {
+            type: String,
+            default: null
+        }
+    },
     template:
     `<div class="ccm-region" v-bind:class="{ 'child': isChild, 'root': !isChild, 'expanded': (isLoading || isExpanded)}">
         <div class="region-wrapper">
@@ -273,6 +298,7 @@ Vue.component("ccm-region", {
             <ccm-loader />
         </div>
     </div>`,
+
     methods: {
         onEdit: function () {
             this.mode = "Edit";
@@ -329,7 +355,6 @@ Vue.component("ccm-region", {
     created: function () {
         this.isChild = this.parentId != null;
     },
-
     data: function () {
         return {
             mode: 'None',
