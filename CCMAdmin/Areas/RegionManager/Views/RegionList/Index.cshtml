@@ -14,9 +14,16 @@
 <h2>Index</h2>
 
 <div id="_regionList" class="region-list">
+    <ccm-region-constructor v-on:created="onRegionCreated"></ccm-region-constructor>
+
+    <ccm-region v-for="region in regions"
+                v-bind:id='region.id'
+                v-bind:name='region.name'>
+    </ccm-region>
+
     @foreach (var region in Model)
     {
-        <ccm-region id="@region.Id" name="@region.Name"></ccm-region>
+        <ccm-region :id="@region.Id" name="@region.Name"></ccm-region>
     }
 </div>
 

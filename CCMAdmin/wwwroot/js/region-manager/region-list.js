@@ -367,5 +367,13 @@ Vue.component("ccm-region", {
 })
 
 let vm = new Vue({
-    el: '#_regionList'
+    el: '#_regionList',
+    data: {
+        regions: []
+    },
+    methods: {
+        onRegionCreated: function (region) {
+            this.regions.push(region);
+        }
+    }
 });
