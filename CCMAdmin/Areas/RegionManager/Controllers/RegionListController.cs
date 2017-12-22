@@ -50,9 +50,42 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         }
 
         [HttpPut]
-        [Route("add")]
-        public JsonResult Add(
+        [Route("add-root")]
+        public JsonResult AddRoot(
             [FromBody] RegionRequest request)
+        {
+            if(this.ModelState.IsValid)
+            {
+                var regions = new List<Region>();
+
+                var paramName = new NpgsqlParameter("name", DbType.String);
+                paramName.Value = request.Name;
+
+                using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
+                using (var comm = conn.FunctionCommand("insert_region", paramName))
+                using (var reader = comm.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var region = new Region();
+                        region.Id = reader.GetInt32(reader.GetOrdinal("id"));
+                        region.Name = reader.GetString(reader.GetOrdinal("name"));
+
+                        regions.Add(region);
+                    }
+                }
+
+
+                return Json(new { success = true, data = regions.First() });
+            }
+
+            return Json(new { success = false, name = $"Error: [{ModelState["Name"].Errors.FirstOrDefault()?.ErrorMessage}]" });
+        }
+
+        [HttpPut]
+        [Route("add-child")]
+        public JsonResult AddChild(
+            [FromBody] ChildRegionRequest request)
         {
             if (this.ModelState.IsValid)
             {
@@ -122,11 +155,15 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         }
     }
 
-    public class RegionRequest
+    public class ChildRegionRequest :
+        RegionRequest
     {
         [Range(1, int.MaxValue)]
         public int ParentId { get; set; }
+    }
 
+    public class RegionRequest
+    {
         //[JsonProperty(PropertyName = "name")]
         [Required]
         [StringLength(10)]
