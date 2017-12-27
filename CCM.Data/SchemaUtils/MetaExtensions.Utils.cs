@@ -31,9 +31,13 @@ namespace CCM.Data.SchemaUtils
             TParam parameter)
         {
             var dbType = default(DbType);
-            if (field.Info.PropertyType == typeof(Int32))
+            if (field.Info.PropertyType == typeof(Boolean))
+                dbType = DbType.Boolean;
+            else if (field.Info.PropertyType == typeof(Int32)
+                || field.Info.PropertyType == typeof(Int32?))
                 dbType = DbType.Int32;
-            else if (field.Info.PropertyType == typeof(Int64))
+            else if (field.Info.PropertyType == typeof(Int64)
+                || field.Info.PropertyType == typeof(Int64?))
                 dbType = DbType.Int64;
             else if (field.Info.PropertyType == typeof(string))
                 dbType = DbType.String;
@@ -41,7 +45,7 @@ namespace CCM.Data.SchemaUtils
             var val = field.Info.GetValue(parameter);
             var name = field.Meta.Name;
 
-            return new NpgsqlParameter(name, dbType) { Value = val };
+            return new NpgsqlParameter(name, dbType) { Value = val ?? DBNull.Value };
         }
         #endregion
     }
