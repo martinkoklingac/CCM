@@ -1,14 +1,9 @@
 @using CCMAdmin.Areas.RegionManager.Models.RegionList
+@addTagHelper CCMAdmin.TagHelpers.*, CCMAdmin
 @model RegionListModel
 
 @section scripts{
-    <script type="text/javascript">
-        let regions = [];
-        @foreach(var region in Model)
-        {
-            @Html.Raw($"regions.push({{id:{region.Id}, name:'{region.Name}'}});")
-        }
-    </script>
+    <json-variable name="regions" data="Model" />
     <script type="text/javascript" src="~/js/region-manager/region-list.js"></script>
 }
 
