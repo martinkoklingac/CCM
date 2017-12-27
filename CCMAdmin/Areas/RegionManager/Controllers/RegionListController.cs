@@ -1,12 +1,8 @@
-using CCM.Data;
 using CCM.Data.Web.Filters;
 using CCMAdmin.Areas.RegionManager.Models.RegionList;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Npgsql;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Linq;
 
 namespace CCMAdmin.Areas.RegionManager.Controllers
@@ -56,27 +52,10 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         {
             if(this.ModelState.IsValid)
             {
-                var regions = new List<Region>();
+                var region = this.RegionService
+                    .InsertRegion(new NewRegion(request.Name, null));
 
-                var paramName = new NpgsqlParameter("name", DbType.String);
-                paramName.Value = request.Name;
-
-                using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-                using (var comm = conn.FunctionCommand("insert_region", paramName))
-                using (var reader = comm.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var region = new Region();
-                        region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                        region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                        regions.Add(region);
-                    }
-                }
-
-
-                return Json(new { success = true, data = regions.First() });
+                return Json(new { success = true, data = region });
             }
 
             return Json(new { success = false, name = $"Error: [{ModelState["Name"].Errors.FirstOrDefault()?.ErrorMessage}]" });
@@ -89,30 +68,11 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                var regions = new List<Region>();
-
-                var paramParentId = new NpgsqlParameter("parent_id", DbType.Int32);
-                paramParentId.Value = request.ParentId;
-
-                var paramName = new NpgsqlParameter("name", DbType.String);
-                paramName.Value = request.Name;
-
-                using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-                using (var comm = conn.FunctionCommand("insert_region", paramParentId, paramName))
-                using (var reader = comm.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var region = new Region();
-                        region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                        region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                        regions.Add(region);
-                    }
-                }
+                var region = this.RegionService
+                    .InsertRegion(new NewRegion(request.Name, request.ParentId));
 
 
-                return Json(new { success = true, data = regions.First() });
+                return Json(new { success = true, data = region });
             }
 
             return Json(new { success = false, name = $"Error: [{ModelState["Name"].Errors.FirstOrDefault()?.ErrorMessage}]" });
@@ -125,28 +85,8 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
         {
             if (this.ModelState.IsValid)
             {
-
-                var regions = new List<Region>();
-
-                var paramId = new NpgsqlParameter("id", DbType.Int32);
-                paramId.Value = request.Id;
-
-                var paramDeleteChildren = new NpgsqlParameter("delete_children", DbType.Boolean);
-                paramDeleteChildren.Value = request.DeleteChildren;
-
-                using (var conn = new NpgsqlConnection("Host=localhost;Username=CCMAdmin;Password=password;Database=CCM").Init())
-                using (var comm = conn.FunctionCommand("delete_region", paramId, paramDeleteChildren))
-                using (var reader = comm.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var region = new Region();
-                        region.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                        region.Name = reader.GetString(reader.GetOrdinal("name"));
-
-                        regions.Add(region);
-                    }
-                }
+                var regions = this.RegionService
+                    .DeleteRegion(new DeleteRegion(request.Id, request.DeleteChildren));
 
                 return Json(new { success = true, data = regions });
             }
@@ -164,7 +104,6 @@ namespace CCMAdmin.Areas.RegionManager.Controllers
 
     public class RegionRequest
     {
-        //[JsonProperty(PropertyName = "name")]
         [Required]
         [StringLength(10)]
         public string Name { get; set; }
