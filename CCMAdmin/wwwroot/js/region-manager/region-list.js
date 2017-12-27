@@ -403,6 +403,9 @@ let vm = new Vue({
             if (i >= 0) {
                 this.regions.splice(i, 1);
             }
+
+            this.regions = this.regions
+                .concat(d.promotedRegions);
         }
     }
 });
