@@ -9,6 +9,8 @@ namespace CCMAdmin
     {
         IReadOnlyCollection<Region> GetRegionPrimogenitors();
         IReadOnlyCollection<Region> GetRegionChildren(ParentId parentId);
+        Region InsertRegion(NewRegion region);
+        IReadOnlyCollection<Region> DeleteRegion(DeleteRegion region);
     }
 
     public struct ParentId
@@ -31,6 +33,42 @@ namespace CCMAdmin
         #endregion
     }
 
+    public struct DeleteRegion
+    {
+        #region CONSTRUCTORS
+        public DeleteRegion(int id, bool deleteChildren)
+        {
+            this.Id = id;
+            this.DeleteChildren = deleteChildren;
+        }
+        #endregion
+
+        #region PUBLIC PROPERTIES
+        [Meta(Name = "id")]
+        public int Id { get; }
+        [Meta(Name = "delete_children")]
+        public bool DeleteChildren { get; }
+        #endregion
+    }
+
+    public struct NewRegion
+    {
+        #region CONSTRUCTORS
+        public NewRegion(string name, int? parentId)
+        {
+            this.Name = name;
+            this.ParentId = parentId;
+        }
+        #endregion
+
+        #region PUBLIC PROPERTIES
+        [Meta(Name = "name")]
+        public string Name { get; }
+        [Meta(Name = "parent_id")]
+        public int? ParentId { get; }
+        #endregion
+    }
+
     public class RegionService :
         IRegionService
     {
@@ -49,23 +87,37 @@ namespace CCMAdmin
         #region PUBLIC METHODS
         public IReadOnlyCollection<Region> GetRegionPrimogenitors()
         {
-            var regions = new List<Region>();
-
             this._sessionContextProvider
                 .GetSessionContext()
-                .ExecFunctionCollection("get_region_primogenitors", regions);
+                .ExecFunctionCollection("get_region_primogenitors", out IReadOnlyCollection<Region> result);
 
-            return regions;
+            return result;
         }
         public IReadOnlyCollection<Region> GetRegionChildren(ParentId parentId)
         {
-            var regions = new List<Region>();
-
             this._sessionContextProvider
                 .GetSessionContext()
-                .ExecFunctionCollection("get_region_children", parentId, regions);
+                .ExecFunctionCollection("get_region_children", out IReadOnlyCollection<Region> result, parentId);
 
-            return regions;
+            return result;
+        }
+
+        public Region InsertRegion(NewRegion region)
+        {
+            this._sessionContextProvider
+                .GetSessionContext()
+                .ExecFunctionSingle("insert_region", out Region result, region);
+
+            return result;
+        }
+
+        public IReadOnlyCollection<Region> DeleteRegion(DeleteRegion region)
+        {
+            this._sessionContextProvider
+                .GetSessionContext()
+                .ExecFunctionCollection("delete_region", out IReadOnlyCollection<Region> result, region);
+
+            return result;
         }
         #endregion
     }
