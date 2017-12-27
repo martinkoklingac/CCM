@@ -4,11 +4,11 @@ namespace CCM.Data
 {
     public interface IUowSessionContext
     {
-        void ExecFunctionSingle<TParam, TResult>(string function, TParam param, TResult result)
+        void ExecFunctionSingle<TResult, TParam>(string function, out TResult result, TParam param)
             where TResult : new();
-        void ExecFunctionCollection<TResult>(string function, ICollection<TResult> result)
+        void ExecFunctionCollection<TResult>(string function, out IReadOnlyCollection<TResult> result)
             where TResult : new();
-        void ExecFunctionCollection<TParam, TResult>(string function, TParam param, ICollection<TResult> result)
+        void ExecFunctionCollection<TResult, TParam>(string function, out IReadOnlyCollection<TResult> result, TParam param)
             where TResult : new();
     }
 }
