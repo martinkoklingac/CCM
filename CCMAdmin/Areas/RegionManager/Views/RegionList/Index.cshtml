@@ -2,7 +2,14 @@
 @model RegionListModel
 
 @section scripts{
-    <script src="~/js/region-manager/region-list.js"></script>
+    <script type="text/javascript">
+        let regions = [];
+        @foreach(var region in Model)
+        {
+            @Html.Raw($"regions.push({{id:{region.Id}, name:'{region.Name}'}});")
+        }
+    </script>
+    <script type="text/javascript" src="~/js/region-manager/region-list.js"></script>
 }
 
 @section styles{
@@ -18,12 +25,8 @@
 
     <ccm-region v-for="region in regions"
                 v-bind:id='region.id'
-                v-bind:name='region.name'>
+                v-bind:name='region.name'
+                v-on:deleted='onRegionDeleted'>
     </ccm-region>
-
-    @foreach (var region in Model)
-    {
-        <ccm-region :id="@region.Id" name="@region.Name"></ccm-region>
-    }
 </div>
 

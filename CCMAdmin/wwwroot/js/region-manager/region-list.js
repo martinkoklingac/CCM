@@ -262,7 +262,7 @@ Vue.component("ccm-region", {
                 v-bind:name='name'
                 v-bind:is-root='!isChild'
                 v-on:cancel="onCancelled"
-                v-on:deleted="onRegionDeleted" />
+                v-on:deleted="onCurrentRegionDeleted" />
         </div>
 
         <div v-if="mode === 'Edit'">
@@ -286,7 +286,8 @@ Vue.component("ccm-region", {
                 v-for="region in childRegions" 
                 v-bind:id='region.id'
                 v-bind:parent-id = 'id'
-                v-bind:name='region.name' />
+                v-bind:name='region.name'
+                v-on:deleted='onChildRegionDeleted' />
             <div
                 v-if="childRegions.length == 0">
                 There are no regions
@@ -321,32 +322,48 @@ Vue.component("ccm-region", {
         onDelete: function () {
             this.mode = "Delete";
         },
-        onRegionDeleted: function (d) {
-            console.log("-> deleted :");
-            console.log(d);
 
-            //var f = function (x) {
-            //    console.log("-> " + x.id);
-            //    console.log("-> " + d.deletedId);
-            //
-            //    return x.id === d.deletedId;
-            //};
-            //
-            //console.log(this.childRegions);
-            //
-            //var i = this.childRegions.findIndex(f);
-            //
-            //console.log(i);
-            //
-            //if (i >= 0) {
-            //    this.childRegions.splice(i, 1);
-            //}
-            //
-            //this.childRegions
-            //    .push(d.promotedRegions);
+        /**
+         *  Handles deleted event of ccm-region.
+         *  Removes the deleted region from childRegions array and adds the promoted child regions
+         *  to childRegions array.
+         *
+         *  @param {Object} d - Metadata that provides information about the deleted region
+         *  @param {Number} d.deletedId - Id of the deleted region
+         *  @param {Object[]} d.childRegions - List of child regions that will have to be merged up one level
+         *  @param {Number} d.childRegions[].id - Child region id
+         *  @param {String} d.childRegions[].name - Child region name
+         */
+        onChildRegionDeleted: function (d) {
 
-            this.mode = "None";
+            let f = function (x) {
+                return x.id === d.deletedId;
+            };
+
+            let i = this.childRegions.findIndex(f);
+
+            if (i >= 0) {
+                this.childRegions.splice(i, 1);
+            }
+
+            this.childRegions = this.childRegions
+                .concat(d.promotedRegions);
         },
+
+        /**
+         *  Event handler that bubbles up deleted event of ccm-region-deleter component
+         *
+         *  @param {Object} d - Metadata that provides information about the deleted region
+         *  @param {Number} d.deletedId - Id of the deleted region
+         *  @param {Object[]} d.childRegions - List of child regions that will have to be merged up one level
+         *  @param {Number} d.childRegions[].id - Child region id
+         *  @param {String} d.childRegions[].name - Child region name
+         */
+        onCurrentRegionDeleted: function (d) {
+            this.mode = "None";
+            this.$emit("deleted", d);
+        },
+
         onRegionCreated: function (d) {
             this.childRegions.push(d);
         }
@@ -369,11 +386,23 @@ Vue.component("ccm-region", {
 let vm = new Vue({
     el: '#_regionList',
     data: {
-        regions: []
+        regions: regions
     },
     methods: {
         onRegionCreated: function (region) {
             this.regions.push(region);
+        },
+
+        onRegionDeleted: function (d) {
+            let f = function (x) {
+                return x.id === d.deletedId;
+            };
+
+            let i = this.regions.findIndex(f);
+
+            if (i >= 0) {
+                this.regions.splice(i, 1);
+            }
         }
     }
 });
