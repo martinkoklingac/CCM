@@ -1,0 +1,57 @@
+﻿@import "../../css/colors.less";
+
+.style-catalog {
+    margin-top: 100px;
+
+    table {
+        width: 100%;
+
+        thead {
+            tr {
+                th {
+                    vertical-align: top;
+                    padding: 5px;
+                    border-left: 1px solid;
+                    border-bottom: 1px solid;
+                    #named-colors > .border-color(left);
+                    #named-colors > .border-color(bottom);
+
+                    &:first-child {
+                        border-left: 0 none;
+                    }
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    vertical-align: top;
+                    padding: 5px;
+                    border-left: 1px solid;
+                    border-top: 1px solid;
+                    #named-colors > .border-color(left);
+                    #named-colors > .border-color(top);
+
+                    &:first-child {
+                        border-left: 0 none;
+                    }
+                }
+
+                &:first-child {
+                    td {
+                        border-top: 0 none;
+                    }
+                }
+            }
+        }
+    }
+
+    .element-container {
+        display: inline-block;
+    }
+
+    .code-container {
+        display: inline-block;
+    }
+}
