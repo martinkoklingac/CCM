@@ -22,5 +22,9 @@
   {
     "outputFile": "wwwroot/js/region-manager/ccm-region-constructor.css",
     "inputFile": "wwwroot/js/region-manager/ccm-region-constructor.less"
+  },
+  {
+    "outputFile": "wwwroot/js/root/home.css",
+    "inputFile": "wwwroot/js/root/home.less"
   }
 ]
