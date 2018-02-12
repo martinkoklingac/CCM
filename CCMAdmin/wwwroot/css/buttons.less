@@ -1,6 +1,6 @@
 ﻿@import "colors.less";
 
-.ccm-btn {
+.btn() {
     display: inline-block;
     border: solid 1px;
     box-sizing: border-box;
@@ -12,29 +12,71 @@
     }
 
     &.normal {
-        border-radius: 4px;
+        border-radius: 2px;
         height: 22px;
         line-height: 22px;
-        font-size: 12px;
-        min-width: 50px;
-        padding: 0 5px;
     }
+}
+
+.ccm-btn {
+    .btn();
+    min-width: 50px;
+    font-size: 12px;
+    padding: 0 5px;
 
     &.submit-btn {
-        border-color: @std-gray-2;
+        #named-colors > .control-border-color();
         background-color: @std-blue-1;
         color: @std-white;
     }
 
     &.cancel-btn {
-        border-color: @std-gray-2;
+        #named-colors > .control-border-color();
         background-color: @std-white;
         color: @std-red-1;
     }
 
     &.delete-btn {
-        border-color: @std-gray-2;
+        #named-colors > .control-border-color();
         background-color: @std-red;
         color: @std-white;
+    }
+}
+
+.ccm-ico-btn {
+    .btn();
+    width: 22px;
+    font-size: 17px;
+    padding: 0;
+
+
+    &.submit-btn {
+        border: 1px solid lighten(@std-blue-1, 35%);
+        background-color: lighten(@std-blue-1, 40%);
+        color: darken(@std-blue-1, 10%);
+
+        &:before {
+            content: '\02714'
+        }
+    }
+
+    &.cancel-btn {
+        #named-colors > .control-border-color();
+        background-color: @std-white;
+        color: @std-red-1;
+
+        &:before {
+            content: '\02716';
+        }
+    }
+
+    &.delete-btn {
+        #named-colors > .control-border-color();
+        background-color: @std-red;
+        color: @std-white;
+
+        &:before {
+            content: '\1F5D1';
+        }
     }
 }
