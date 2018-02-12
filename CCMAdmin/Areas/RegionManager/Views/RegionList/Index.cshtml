@@ -2,12 +2,12 @@
 @addTagHelper CCMAdmin.TagHelpers.*, CCMAdmin
 @model RegionListModel
 
-@section scripts{
+@section scripts {
     <json-variable name="regions" data="Model" />
     <script type="text/javascript" src="~/js/region-manager/region-list.js"></script>
 }
 
-@section styles{
+@section styles {
     <link rel="stylesheet" href="~/js/region-manager/region-list.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/js/region-manager/ccm-region-constructor.css" asp-append-version="true" />
 }
