@@ -1,0 +1,68 @@
+
+
+<script type="text/x-template" id="_userForm">
+    <div class="ccm-user-form">
+        <div>{{model.username}}-{{model.email}}</div>
+
+        <div class="form-group">
+            <label for="_username">Username</label>
+            <input id="_username" type="text" class="form-control"
+                   placeholder="Username"
+                   v-model.trim="model.username"/>
+        </div>
+
+        <div class="form-group">
+            <label for="_email">Email address</label>
+            <input id="_email" type="email" class="form-control" 
+                   placeholder="Email"
+                   v-model.trim="model.email"/>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary btn-lg" v-on:click.prevent="onNext">Next</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template" id="_passwordForm">
+    <div class="cmd-password-form">
+        <div>{{model.password}}</div>
+
+        <div class="form-group">
+            <label for="_password">Password</label>
+            <input id="_password" type="password" class="form-control"
+                   placeholder="Password"
+                   v-model.trim="model.password" />
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary btn-lg" v-on:click.prevent="onNext">Next</button>
+        </div>
+    </div>
+</script>
+
+
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-lg-offset-4">
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a href="#">Register</a></li>
+                <li role="presentation"><a href="#">Login</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 col-lg-offset-4">
+            <div id="_app">
+                <user-form></user-form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/Areas/Public/Auth/auth.js"></script>
