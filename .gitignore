@@ -2,6 +2,7 @@
 .suo
 obj/
 bin/
+node_modules/
 **/wwwroot/lib/
 **/*.css
 **/*.user
