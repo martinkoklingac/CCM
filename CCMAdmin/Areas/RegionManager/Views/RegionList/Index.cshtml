@@ -4,7 +4,8 @@
 
 @section scripts {
     <json-variable name="regions" data="Model" />
-    <script type="text/javascript" src="~/js/region-manager/region-list.js"></script>
+    @*<script type="text/javascript" src="~/js/region-manager/region-list.js"></script>*@
+    <script type="text/javascript" src="~/js/out.js"></script>
 }
 
 @section styles {
@@ -18,10 +19,11 @@
 <div id="_regionList" class="region-list">
     <ccm-region-constructor v-on:created="onRegionCreated"></ccm-region-constructor>
 
-    <ccm-region v-for="region in regions"
+    <ccm-region v-for="region in regions" :key="region.id"
                 v-bind:id='region.id'
                 v-bind:name='region.name'
                 v-on:deleted='onRegionDeleted'>
     </ccm-region>
+
 </div>
 
