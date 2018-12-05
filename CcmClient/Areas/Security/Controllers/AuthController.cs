@@ -12,12 +12,16 @@ namespace CcmClient.Areas.Security.Controllers
     {
         #region PRIVATE FIELDS
         private readonly SignInManager<CcmUser> _signInManager;
+        private readonly UserManager<CcmUser> _userManager;
         #endregion
 
         #region CONTROLLERS
-        public AuthController(SignInManager<CcmUser> signInManager)
+        public AuthController(
+            SignInManager<CcmUser> signInManager,
+            UserManager<CcmUser> userManager)
         {
             this._signInManager = signInManager;
+            this._userManager = userManager;
         }
         #endregion
 
@@ -33,6 +37,43 @@ namespace CcmClient.Areas.Security.Controllers
             return View(new LoginModel());
         }
 
+        [HttpGet("register")]
+        public IActionResult Register()
+        {
+            return View(new RegistrationModel());
+        }
+
+
+        [HttpPost("register")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegistrationModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = new CcmUser
+            {
+                UserName = model.UserName,
+                Password = model.Password
+            };
+
+
+            var result = await this._userManager
+                .CreateAsync(user, user.Password);
+
+
+            if(result.Succeeded)
+            {
+                await this._signInManager.SignInAsync(user, true);
+
+                return RedirectToAction("Test", "Index", new { area = "" });
+            }
+            else
+            {
+                return View(model);
+            }
+        }
+
         [HttpPost("login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginModel model)
@@ -45,14 +86,12 @@ namespace CcmClient.Areas.Security.Controllers
 
             if(result.Succeeded)
             {
-
+                return RedirectToAction("Test", "Index", new { area = "" });
             }
             else
             {
-
+                return View(model);
             }
-
-            return View(null);
         }
         #endregion
     }
