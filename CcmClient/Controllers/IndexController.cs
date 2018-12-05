@@ -1,11 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CcmClient.Controllers
 {
     public class IndexController :
         Controller
     {
-        public IndexController() { }
+        private readonly UserManager<CcmUser> _userManager;
+
+        public IndexController(
+            UserManager<CcmUser> userManager)
+        {
+            this._userManager = userManager;
+        }
 
         [HttpGet]
         public IActionResult Index()
@@ -13,5 +22,15 @@ namespace CcmClient.Controllers
             return View();
         }
 
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Test()
+        {
+            var user = await this._userManager
+                .GetUserAsync(this.HttpContext.User);
+
+            return Content($"=> TEST - UserName : {user.UserName} / FirstName : {user.FirstName}");
+        }
     }
 }
