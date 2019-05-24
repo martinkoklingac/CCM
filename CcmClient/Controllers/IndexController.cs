@@ -19,6 +19,8 @@ namespace CcmClient.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            var x = this.User.Identity.IsAuthenticated;
+
             return View();
         }
 

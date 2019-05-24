@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CcmClient
 {
@@ -20,11 +15,20 @@ namespace CcmClient
             services.AddTransient<IUserStore<CcmUser>, CcmUserRepository>();
             services.AddTransient<IRoleStore<CcmRole>, CcmRoleRepository>();
 
+            services.ConfigureApplicationCookie(options =>
+                {
+                    options.LoginPath = "/Account/LogIn";
+                    options.AccessDeniedPath = "/denied";
+                });
+
             services.AddIdentity<CcmUser, CcmRole>()
                 .AddDefaultTokenProviders();
 
             services.AddMvcCore()
-                .AddRazorViewEngine();
+                //.AddViews()
+                .AddJsonFormatters()    //Provides JSON formatting in response
+                .AddRazorViewEngine()
+                .AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,7 +39,9 @@ namespace CcmClient
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseStaticFiles();
 
             app.UseMvc(rb => rb.MapRoute("default", "{controller=Index}/{action=Index}"));
 

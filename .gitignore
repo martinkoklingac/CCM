@@ -4,5 +4,7 @@ obj/
 bin/
 node_modules/
 **/wwwroot/lib/
+**/wwwroot/build/
+**/wwwroot/buildframework/
 **/*.css
 **/*.user

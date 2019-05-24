@@ -5,7 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Security\Data\" />
+    <Compile Remove="wwwroot\buildframework\**" />
+    <Compile Remove="wwwroot\build\**" />
+    <Content Remove="wwwroot\buildframework\**" />
+    <Content Remove="wwwroot\build\**" />
+    <EmbeddedResource Remove="wwwroot\buildframework\**" />
+    <EmbeddedResource Remove="wwwroot\build\**" />
+    <None Remove="wwwroot\buildframework\**" />
+    <None Remove="wwwroot\build\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ClientApp\common\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

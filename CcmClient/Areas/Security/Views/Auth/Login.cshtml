@@ -1,18 +1,29 @@
 ﻿@using CcmClient.Areas.Security.Models.Auth
 @model LoginModel
 
-<div>
-    <form asp-controller="auth" asp-action="login" method="post">
-        <div>
-            <label asp-for="UserName">User Name</label>
-            <input asp-for="UserName" />
-        </div>
-        <div>
-            <label asp-for="Password">Password</label>
-            <input asp-for="Password" type="password" />
-        </div>
-        <div>
-            <button type="submit">Login &gt;</button>
-        </div>
-    </form>
+@{
+    Layout = "_Layout";
+}
+
+@section Scripts{
+    <script src="~/build/root_index.entry/root_index.entry.build.js" asp-append-version="true"></script>
+}
+
+<div id="_index">
+
+    <login-form></login-form>
+
+    @*<form asp-controller="auth" asp-action="login" method="post">
+            <div>
+                <label asp-for="UserName">User Name</label>
+                <input asp-for="UserName" />
+            </div>
+            <div>
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" />
+            </div>
+            <div>
+                <button type="submit">Login &gt;</button>
+            </div>
+        </form>*@
 </div>

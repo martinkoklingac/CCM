@@ -31,7 +31,9 @@ namespace CcmClient
 
         public Task<IdentityResult> CreateAsync(CcmUser user, CancellationToken cancellationToken)
         {
-            user.Id = _userTable.Keys.Max() + 1;
+            user.Id = _userTable.Keys.Any()
+                ? _userTable.Keys.Max() + 1
+                : 0;
 
             _userTable.Add(user.Id, user);
 
